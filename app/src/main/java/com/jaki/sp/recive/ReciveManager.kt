@@ -8,7 +8,7 @@ class ReciveManager(surface: Surface) : DefaultLifecycleObserver,
     ReciveSocketLive.ReciveSocketCallback {
 
     private val screenLive = ReciveSocketLive(this)
-    private val mediaCodec = ReciveMdeiaCodecH265(surface)
+    private val mediaCodec: ReciveMediaCodec = ReciveMdeiaCodecH264(surface)
 
     fun start() {
         screenLive.start()

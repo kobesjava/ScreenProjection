@@ -5,15 +5,14 @@ import android.media.MediaFormat
 import android.view.Surface
 import java.lang.Exception
 
-
-class ReciveMdeiaCodecH265(surface: Surface):ReciveMediaCodec {
+class ReciveMdeiaCodecH264(surface: Surface) : ReciveMediaCodec {
 
     private var mediaCodec: MediaCodec? = null
 
     init {
         try {
-            mediaCodec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_HEVC)
-            val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_HEVC, 1080, 2280)
+            mediaCodec = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+            val format = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1080, 2280)
             format.setInteger(MediaFormat.KEY_BIT_RATE, 1080 * 2280)
             format.setInteger(MediaFormat.KEY_FRAME_RATE, 20)
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)

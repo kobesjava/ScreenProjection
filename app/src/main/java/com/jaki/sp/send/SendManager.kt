@@ -6,12 +6,12 @@ import androidx.lifecycle.LifecycleOwner
 import java.util.concurrent.Executors
 
 class SendManager(mediaProjection: MediaProjection) :
-    SendMediaCodecH265.SendMediaCodecListener,
+    SendMediaCodecListener,
     DefaultLifecycleObserver {
 
     private val threadPool = Executors.newSingleThreadExecutor()
     private val socketLive = SendSocketLive()
-    private val mediaCodec = SendMediaCodecH265(mediaProjection, this)
+    private val mediaCodec: SendMediaCodec = SendMediaCodecH264(mediaProjection, this)
 
     fun start() {
         mediaCodec.init()

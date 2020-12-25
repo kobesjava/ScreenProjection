@@ -8,21 +8,21 @@ import android.media.MediaFormat
 import android.media.projection.MediaProjection
 import java.nio.ByteBuffer
 
-class SendMediaCodecH265(
+class SendMediaCodecH264(
     private val mediaProjection: MediaProjection,
     private val listener: SendMediaCodecListener
 ) : SendMediaCodec {
 
     var mediaCodec: MediaCodec? = null
     var display: VirtualDisplay? = null
-    private val nalI = 19
-    private val nalVps = 32
+    private val nalI = 5
+    private val nalSpsPps = 7
     var vpsSpsPpsBuf: ByteArray? = null
 
     override fun init() {
         try {
             val mediaFormat =
-                MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_HEVC, 1080, 2280)
+                MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 1080, 2280)
             mediaFormat.setInteger(
                 MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
@@ -30,7 +30,7 @@ class SendMediaCodecH265(
             mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1080 * 2280)
             mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 20)
             mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1)//1秒一个I帧
-            mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_HEVC)
+            mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
             mediaCodec?.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             val surface = mediaCodec?.createInputSurface()
             display = mediaProjection.createVirtualDisplay(
@@ -63,8 +63,8 @@ class SendMediaCodecH265(
         if (byteBuffer.get(2).toInt() == 0x01) { //分隔符是 00 00 01
             offset = 3
         }
-        val type = (byteBuffer.get(offset).toInt() and 0x7E) shr 1
-        if (type == nalVps) {
+        val type = byteBuffer.get(offset).toInt() and 0x1F
+        if (type == nalSpsPps) {
             vpsSpsPpsBuf = ByteArray(bufferInfo.size)
             byteBuffer.get(vpsSpsPpsBuf)
         } else if (type == nalI) {
